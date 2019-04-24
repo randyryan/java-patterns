@@ -120,7 +120,7 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
     }
 
     @SuppressWarnings("unchecked")
-	protected I getItem(Event event) {
+    protected I getEventItem(Event event) {
       return (I) event.widget;
     }
 
@@ -131,7 +131,7 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
     }
 
     private void mouseExit(Event event) {
-      if (getItem(event) == itemEnabler.getPreviousItem()) {
+      if (getEventItem(event) == itemEnabler.getPreviousItem()) {
         // No item is current
         ItemToolTip.this.hide();
       }

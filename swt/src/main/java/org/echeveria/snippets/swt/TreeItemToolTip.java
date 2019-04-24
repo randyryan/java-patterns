@@ -26,7 +26,7 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
 
   @Override
   public TreeItem[] getControlItems() {
-    return control.getItems();
+    return getControl().getItems();
   }
 
   @Override
@@ -51,7 +51,7 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
 
   @Override
   protected TreeItemEnabler createItemEnabler() {
-    return new TreeItemEnabler(control);
+    return new TreeItemEnabler(getControl());
   }
 
   @Override
@@ -72,7 +72,7 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
 
     @Override
     protected Point getToolTipLocation(Event event) {
-      Rectangle bounds = getItem(event).getBounds();
+      Rectangle bounds = getEventItem(event).getBounds();
       return new Point(bounds.x - 28, bounds.y + 19);
     }
 
@@ -86,7 +86,7 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
 
     @Override
     protected TreeItem getEventItem(Event event) {
-      return control.getItem(new Point(event.x, event.y));
+      return getControl().getItem(new Point(event.x, event.y));
     }
 
   }
