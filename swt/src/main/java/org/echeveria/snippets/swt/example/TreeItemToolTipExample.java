@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
- * TreeUI
+ * TreeItem tooltip example
  *
- * @author Li Wan
+ * @author ryan131
  * @since Apr 22, 2019, 4:39:31 PM
  */
 public class TreeItemToolTipExample {
