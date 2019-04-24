@@ -5,6 +5,8 @@
 package org.echeveria.snippets.swt;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
@@ -19,7 +21,17 @@ import org.eclipse.swt.widgets.TreeItem;
 public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
 
   public TreeItemToolTip(Tree tree) {
-    super(new TreeItemEnabler(tree));
+    super(tree);
+  }
+
+  @Override
+  protected TreeItemAdapter getItemAdapter() {
+    return new TreeItemAdapter();
+  }
+
+  @Override
+  protected TreeItemEnabler getItemEnabler() {
+    return new TreeItemEnabler(control);
   }
 
   @Override
@@ -49,6 +61,34 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
       }
     }
     super.registerItem(item);
+  }
+
+  public class TreeItemAdapter extends ItemAdapter {
+
+    @Override
+    protected Point getToolTipLocation(Event event) {
+      Rectangle bounds = getItem(event).getBounds();
+      return new Point(bounds.x - 28, bounds.y + 19);
+    }
+
+  }
+
+  public class TreeItemEnabler extends ItemEnabler {
+
+    public TreeItemEnabler(Tree tree) {
+      super(tree);
+    }
+
+    @Override
+    protected TreeItem getEventItem(Event event) {
+      return control.getItem(new Point(event.x, event.y));
+    }
+
+    @Override
+    public TreeItem[] getControlItems() {
+      return control.getItems();
+    }
+
   }
 
 }

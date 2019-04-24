@@ -12,7 +12,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -21,7 +20,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * ItemToolTip
@@ -32,17 +30,27 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
 
   protected final static int MAX_WIDTH = 500;
 
+  protected C control;
   protected final ItemAdapter itemAdapter;
-  protected final ItemEnabler<C, I> itemEnabler;
+  protected final ItemEnabler itemEnabler;
 
-  protected ItemToolTip(ItemEnabler<C, I> itemEnabler) {
-    super(itemEnabler.getControl(), ToolTip.RECREATE, true);
-    this.itemAdapter = new ItemAdapter();
-    this.itemEnabler = itemEnabler;
+  protected ItemToolTip(C control) {
+    super(control, ToolTip.RECREATE, true);
+    this.control = control;
+    this.itemAdapter = getItemAdapter();
+    this.itemEnabler = getItemEnabler();
     for (I item : this.itemEnabler.getControlItems()) {
       registerItem(item);
     }
   }
+
+  public C getControl() {
+    return control;
+  }
+
+  protected abstract ItemAdapter getItemAdapter();
+
+  protected abstract ItemEnabler getItemEnabler();
 
   @Override
   protected abstract Composite createToolTipContentArea(Event event, Composite parent);
@@ -92,9 +100,12 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
     item.addListener(SWT.MouseExit, itemAdapter);
   }
 
-  // Item adapter for SWT.MouseEnter and SWT.MouseExit events.
-
-  protected class ItemAdapter implements Listener {
+  /**
+   * Item adapter for SWT.MouseEnter and SWT.MouseExit events.
+   *
+   * @author ryan131
+   */
+  protected abstract class ItemAdapter implements Listener {
 
     @Override
     public void handleEvent(Event event) {
@@ -106,14 +117,15 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
       }
     }
 
-    private TreeItem getItem(Event event) {
-      return (TreeItem) event.widget;
+    @SuppressWarnings("unchecked")
+	protected I getItem(Event event) {
+      return (I) event.widget;
     }
 
+    protected abstract Point getToolTipLocation(Event event);
+
     private void mouseEnter(Event event) {
-      TreeItem item = getItem(event);
-      Rectangle bounds = item.getBounds();
-      ItemToolTip.this.show(new Point(bounds.x - 28, bounds.y + 19));
+      ItemToolTip.this.show(getToolTipLocation(event));
     }
 
     private void mouseExit(Event event) {
@@ -121,6 +133,64 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
         // No item is current
         ItemToolTip.this.hide();
       }
+    }
+
+  }
+
+  /**
+   * Enables certain events of Item objects, such as SWT.MouseEnter, SWT.MouseExit.
+   * Note: This is a listener to be added to the parent of the items to be enabled.
+   *
+   * @author ryan131
+   */
+  public abstract class ItemEnabler implements Listener {
+
+    protected C control;
+    protected I previousItem;
+    protected I currentItem;
+
+    protected ItemEnabler(C control) {
+      this.control = control;
+      this.control.addListener(SWT.MouseMove, this);
+    }
+
+    @Override
+    public void handleEvent(Event event) {
+      if (event.type == SWT.MouseMove) {
+        mouseMove(event);
+      }
+    }
+
+    protected abstract I getEventItem(Event event);
+
+    protected void mouseMove(Event event) {
+      currentItem = getEventItem(event);
+      if (previousItem != currentItem) {
+        if (previousItem != null) {
+          // When the current item is not the previous item, meaning that the mouse has
+          // exited the previous item, so the event widget should be the previous item.
+          event.widget = previousItem;
+          currentItem = null;
+          previousItem.notifyListeners(SWT.MouseExit, event);
+        }
+        previousItem = currentItem;
+        if (previousItem != null) {
+          // When the current item is the previous item, meaning that the mouse has
+          // entered the current item, so the event widget should be the current item.
+          event.widget = currentItem;
+          previousItem.notifyListeners(SWT.MouseEnter, event);
+        }
+      }
+    }
+
+    public abstract I[] getControlItems();
+
+    public I getPreviousItem() {
+      return previousItem; 
+    }
+
+    public I getCurrentItem() {
+      return currentItem;
     }
 
   }
