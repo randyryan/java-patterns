@@ -30,16 +30,16 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
 
   protected final static int MAX_WIDTH = 500;
 
-  protected C control;
+  protected final C control;
   protected final ItemAdapter itemAdapter;
   protected final ItemEnabler itemEnabler;
 
   protected ItemToolTip(C control) {
     super(control, ToolTip.RECREATE, true);
     this.control = control;
-    this.itemAdapter = getItemAdapter();
-    this.itemEnabler = getItemEnabler();
-    for (I item : this.itemEnabler.getControlItems()) {
+    this.itemAdapter = createItemAdapter();
+    this.itemEnabler = createItemEnabler();
+    for (I item : getControlItems()) {
       registerItem(item);
     }
   }
@@ -48,9 +48,19 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
     return control;
   }
 
-  protected abstract ItemAdapter getItemAdapter();
+  public abstract I[] getControlItems();
 
-  protected abstract ItemEnabler getItemEnabler();
+  /**
+   * Registers the item to respond to item tooltip events.
+   */
+  public void registerItem(I item) {
+    item.addListener(SWT.MouseEnter, itemAdapter);
+    item.addListener(SWT.MouseExit, itemAdapter);
+  }
+
+  protected abstract ItemAdapter createItemAdapter();
+
+  protected abstract ItemEnabler createItemEnabler();
 
   @Override
   protected abstract Composite createToolTipContentArea(Event event, Composite parent);
@@ -90,14 +100,6 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
         .align(SWT.FILL, SWT.BEGINNING)
         .hint(Math.min(textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, MAX_WIDTH), SWT.DEFAULT)
         .applyTo(textLabel);
-  }
-
-  /**
-   * Registers the item to respond to item tooltip.
-   */
-  public void registerItem(I item) {
-    item.addListener(SWT.MouseEnter, itemAdapter);
-    item.addListener(SWT.MouseExit, itemAdapter);
   }
 
   /**
@@ -145,13 +147,11 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
    */
   public abstract class ItemEnabler implements Listener {
 
-    protected C control;
     protected I previousItem;
     protected I currentItem;
 
     protected ItemEnabler(C control) {
-      this.control = control;
-      this.control.addListener(SWT.MouseMove, this);
+      control.addListener(SWT.MouseMove, this);
     }
 
     @Override
@@ -182,8 +182,6 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Def
         }
       }
     }
-
-    public abstract I[] getControlItems();
 
     public I getPreviousItem() {
       return previousItem; 

@@ -25,27 +25,8 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
   }
 
   @Override
-  protected TreeItemAdapter getItemAdapter() {
-    return new TreeItemAdapter();
-  }
-
-  @Override
-  protected TreeItemEnabler getItemEnabler() {
-    return new TreeItemEnabler(control);
-  }
-
-  @Override
-  protected Composite createToolTipContentArea(Event event, Composite parent) {
-    Composite content = createContentComposite(event, parent);
-
-    Image itemIcon = itemEnabler.getCurrentItem().getImage();
-    String itemName = itemEnabler.getCurrentItem().getText();
-    String itemDesc = "This is a description for the item " + itemName;
-
-    addLine(event, content, itemIcon, itemName, true);
-    addLine(event, content, null, itemDesc, false);
-
-    return content;
+  public TreeItem[] getControlItems() {
+    return control.getItems();
   }
 
   @Override
@@ -61,6 +42,30 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
       }
     }
     super.registerItem(item);
+  }
+
+  @Override
+  protected TreeItemAdapter createItemAdapter() {
+    return new TreeItemAdapter();
+  }
+
+  @Override
+  protected TreeItemEnabler createItemEnabler() {
+    return new TreeItemEnabler(control);
+  }
+
+  @Override
+  protected Composite createToolTipContentArea(Event event, Composite parent) {
+    Composite content = createContentComposite(event, parent);
+
+    Image itemIcon = itemEnabler.getCurrentItem().getImage();
+    String itemName = itemEnabler.getCurrentItem().getText();
+    String itemDesc = "This is a description for the item " + itemName;
+
+    addLine(event, content, itemIcon, itemName, true);
+    addLine(event, content, null, itemDesc, false);
+
+    return content;
   }
 
   public class TreeItemAdapter extends ItemAdapter {
@@ -82,11 +87,6 @@ public class TreeItemToolTip extends ItemToolTip<Tree, TreeItem> {
     @Override
     protected TreeItem getEventItem(Event event) {
       return control.getItem(new Point(event.x, event.y));
-    }
-
-    @Override
-    public TreeItem[] getControlItems() {
-      return control.getItems();
     }
 
   }
