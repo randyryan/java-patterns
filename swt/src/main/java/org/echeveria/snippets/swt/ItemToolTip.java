@@ -5,9 +5,11 @@
 package org.echeveria.snippets.swt;
 
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -26,7 +28,7 @@ import org.eclipse.swt.widgets.TreeItem;
  *
  * @author ryan131
  */
-public abstract class ItemToolTip<C extends Control, I extends Item> extends ToolTip {
+public abstract class ItemToolTip<C extends Control, I extends Item> extends DefaultToolTip {
 
   protected final static int MAX_WIDTH = 500;
 
@@ -45,7 +47,7 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Too
   @Override
   protected abstract Composite createToolTipContentArea(Event event, Composite parent);
 
-  protected Composite createContentComposite(Composite parent) {
+  protected Composite createContentComposite(Event event, Composite parent) {
     GridLayout gridLayout = new GridLayout();
     gridLayout.numColumns = 2;
     gridLayout.marginWidth = 5;
@@ -53,34 +55,33 @@ public abstract class ItemToolTip<C extends Control, I extends Item> extends Too
 
     Composite composite = new Composite(parent, SWT.NONE);
     composite.setLayout(gridLayout);
-    composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+    composite.setBackground(getBackgroundColor(event));
     return composite;
   }
 
-  protected void addImageAndText(Composite parent, Image image, String text, boolean bold) {
+  protected void addLine(Event event, Composite parent, Image image, String text, boolean bold) {
     Label imageLabel = new Label(parent, SWT.NONE);
-    imageLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-    imageLabel.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-    imageLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING));
+    imageLabel.setForeground(getForegroundColor(event));
+    imageLabel.setBackground(getBackgroundColor(event));
+    imageLabel.setLayoutData(
+        new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING));
     imageLabel.setImage(image);
 
     Label textLabel = new Label(parent, SWT.WRAP);
-    textLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-    textLabel.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-    textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER));
+    textLabel.setForeground(getForegroundColor(event));
+    textLabel.setBackground(getBackgroundColor(event));
+    textLabel.setLayoutData(
+        new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER));
     if (bold) {
-      textLabel.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+      Font font = textLabel.getFont();
+      font = FontDescriptor.createFrom(font).setStyle(SWT.BOLD).createFont(textLabel.getDisplay());
+      textLabel.setFont(font);
     }
-    textLabel.setText(removeTrailingNewline(text));
-    int width = Math.min(textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, MAX_WIDTH);
-    GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).hint(width, SWT.DEFAULT).applyTo(textLabel);
-  }
-
-  private String removeTrailingNewline(String text) {
-    if (text.endsWith("\n")) {
-      return text.substring(0, text.length() - 1);
-    }
-    return text;
+    textLabel.setText(text);
+    GridDataFactory.fillDefaults()
+        .align(SWT.FILL, SWT.BEGINNING)
+        .hint(Math.min(textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, MAX_WIDTH), SWT.DEFAULT)
+        .applyTo(textLabel);
   }
 
   /**

@@ -22,7 +22,7 @@ public class TreeItemEnabler extends ItemEnabler<Tree, TreeItem> {
 
   @Override
   protected TreeItem getEventItem(Event event) {
-    return control.getItem(new Point(event.x, event.y)) ;
+    return control.getItem(new Point(event.x, event.y));
   }
 
   @Override

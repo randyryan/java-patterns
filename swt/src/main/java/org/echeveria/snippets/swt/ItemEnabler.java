@@ -22,7 +22,7 @@ public abstract class ItemEnabler<C extends Control, I extends Item> implements 
   protected I previousItem;
   protected I currentItem;
 
-  public ItemEnabler(C control) {
+  protected ItemEnabler(C control) {
     this.control = control;
     this.control.addListener(SWT.MouseMove, this);
   }
