@@ -28,8 +28,12 @@ public class TableItemToolTipExample {
       {"E", "E", "F♯", "G♯", "A", "B", "C♯", "D♯"},
       {"B", "B", "C♯", "D♯", "E", "F♯", "G♯", "A♯"},
       {"F♯", "F♯", "G♯", "A♯", "B", "C♯", "D♯", "E♯"},
-      {"C♯", "C♯", "D♯", "E♯", "F♯", "G♯", "A♯", "B#"},
-      {"G♯", "G♯", "A♯", "B#", "C♯", "D♯", "E♯", "F♯♯"}
+      {"C♯", "C♯", "D♯", "E♯", "F♯", "G♯", "A♯", "B♯"},
+      {"G♯", "G♯", "A♯", "B♯", "C♯", "D♯", "E♯", "F♯♯"},
+      {"D♯", "D♯", "E♯", "F♯♯", "G♯", "A♯", "B♯", "C♯♯"},
+      {"A♯", "A♯", "B♯", "C♯♯", "D♯", "E♯", "F♯♯", "G♯♯"},
+      {"E♯", "E♯", "F♯♯", "G♯♯", "A♯", "B♯", "C♯♯", "D♯♯"},
+      {"B♯", "B♯", "C♯♯", "D♯♯", "E♯", "F♯♯", "G♯♯", "A♯♯"}
   };
 
   public static final ItemInfo[] ITEMS = new ItemInfo[] {
@@ -42,6 +46,10 @@ public class TableItemToolTipExample {
     new ItemInfo("F♯ Major", 6, MAJOR_SCALES[6]),
     new ItemInfo("C♯ Major", 7, MAJOR_SCALES[7]),
     new ItemInfo("G♯ Major", 8, MAJOR_SCALES[8]),
+    new ItemInfo("D♯ Major", 9, MAJOR_SCALES[9]),
+    new ItemInfo("A♯ Major", 10, MAJOR_SCALES[10]),
+    new ItemInfo("E♯ Major", 11, MAJOR_SCALES[11]),
+    new ItemInfo("B♯ Major", 12, MAJOR_SCALES[12])
   };
 
   public static class ItemInfo {
@@ -97,7 +105,7 @@ public class TableItemToolTipExample {
 
     table.setHeaderVisible(true);
 
-    for (int i = 0; i <= 8; i++) {
+    for (int i = 0; i < Math.min(MAJOR_SCALES.length, ITEMS.length); i++) {
       TableItem tableItem = new TableItem(table, SWT.NONE);
       tableItem.setText(MAJOR_SCALES[i]);
       tableItem.setData(ITEMS[i]);
@@ -123,3 +131,4 @@ public class TableItemToolTipExample {
   }  
 
 }
+
