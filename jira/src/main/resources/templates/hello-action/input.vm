@@ -1,0 +1,33 @@
+<html>
+
+<head>
+  <title>Hello</title>
+  <meta name="decorator" content="atl.general"/>
+</head>
+
+<body>
+  <div class="aui-page-panel">
+    <div class="aui-page-panel-inner">
+      <section class="aui-page-panel-content">
+
+        <form class="aui" method="POST" action="$requestContext.baseUrl/secure/Hello.jspa">
+          <div class="form-body">
+            <div class="field-group">
+              <h2>Hi, there!</h2>
+              <p></p>
+              <label for="name">Name<span class="aui-icon icon-required">(required)</span></label>
+              <input class="text medium-field" type="text" id="name" name="name" placeholder="Enter your name">
+              <div class="description">Enter your name to be greeted.</div>
+            </div>
+          </div>
+          <div class="buttons-container form-footer">
+            <button class="aui-button aui-button-primary">Next</button>
+          </div>
+        </form>
+
+      </section>
+    </div>
+  </div>
+</body>
+
+</html>
