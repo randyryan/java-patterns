@@ -1,38 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
 
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <vendor name="${project.organization.name}" url="${project.organization.url}" />
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2"> 
+  <plugin-info> 
+    <description>${project.description}</description>  
+    <version>${project.version}</version>  
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>  
+    <param name="plugin-icon">images/pluginIcon.png</param>  
+    <param name="plugin-logo">images/pluginLogo.png</param> 
   </plugin-info>
-
-  <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="jira-snippets"/>
-
-  <!-- add our web resources -->
-  <web-resource key="jira-snippets-resources" name="jira-snippets Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    
-    <resource type="download" name="jira-snippets.css" location="/css/jira-snippets.css"/>
-    <resource type="download" name="jira-snippets.js" location="/js/jira-snippets.js"/>
-    <resource type="download" name="images/" location="/images"/>
-
-    <context>jira-snippets</context>
-  </web-resource>
-
-  <!-- Add the Hello action -->
-  <webwork1 key="hello-action" name="Hello Action" i18n-name-key="hello-action.name">
-    <description key="hello-action.description">An Action to say hello!</description>
-    <actions>
-      <action name="org.echeveria.snippets.jira.action.HelloAction" alias="Hello">
-        <view name="input">/templates/hello-action/input.vm</view>
-        <view name="success">/templates/hello-action/success.vm</view>
-        <view name="error">/templates/hello-action/error.vm</view>
-      </action>
-    </actions>
-  </webwork1>
-
 </atlassian-plugin>
