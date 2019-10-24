@@ -22,8 +22,8 @@ public class MyComponentWiredTest {
   @Test
   public void testMyName() {
     Assert.assertEquals("names do not match!",
-                 "myComponent:" + applicationProperties.getDisplayName(),
-                 myPluginComponent.getName());
+                        "myComponent:" + applicationProperties.getDisplayName(),
+                        myPluginComponent.getName());
   }
 
 }

@@ -7,5 +7,14 @@
     <vendor name="${project.organization.name}" url="${project.organization.url}"/>  
     <param name="plugin-icon">images/pluginIcon.png</param>  
     <param name="plugin-logo">images/pluginLogo.png</param> 
-  </plugin-info>
+  </plugin-info>  
+  <resource type="i18n" name="i18n" location="jira-snippets"/>
+  <webwork1 name="Plugin Settings Viewer" i18n-name-key="plugin-settings-viewer.name" key="plugin-settings-viewer"> 
+    <description key="plugin-settings-viewer.description">View and manipulate PluginSettings.</description>  
+    <actions> 
+      <action name="org.echeveria.snippets.jira.webwork.PluginSettingsViewerAction" alias="PluginSettingsViewer"> 
+        <view name="view">/plugin-settings-viewer/view.vm</view> 
+      </action> 
+    </actions> 
+  </webwork1>
 </atlassian-plugin>
