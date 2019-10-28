@@ -23,30 +23,30 @@
 
 package org.echeveria.snippets.jira.settings;
 
-import java.util.List;
-
 public class Settings {
 
-  static Settings create(SettingsManager settingsManager, String settingsKey) {
-    return new Settings(settingsManager, settingsKey);
+  public static Settings create(String settingsKey) {
+    return new Settings(settingsKey, -1);
   }
 
-  private final SettingsManager settingsManager;
+  public static Settings create(String settingsKey, int settingsId) {
+    return new Settings(settingsKey, settingsId);
+  }
+
   private final String settingsKey;
-  private List<String> settings;
+  private int settingsId;
 
-  Settings(SettingsManager settingsManager, String settingsKey) {
-
-  }
-
-  Settings(SettingsManager settingsManager, String settingsKey, List<String> settings) {
-    this.settingsManager = settingsManager;
+  protected Settings(String settingsKey, int settingsId) {
     this.settingsKey = settingsKey;
-    this.settings = settings;
+    this.settingsId = settingsId;
   }
 
   public String getSettingsKey() {
     return settingsKey;
+  }
+
+  public int getSettingsId() {
+    return settingsId;
   }
 
 }

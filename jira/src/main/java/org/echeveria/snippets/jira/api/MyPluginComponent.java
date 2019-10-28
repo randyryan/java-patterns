@@ -25,6 +25,8 @@ package org.echeveria.snippets.jira.api;
 
 public interface MyPluginComponent {
 
+  String PLUGIN_KEY = "org.echeveria.snippets.jira-snippets";
+
   String getName();
 
 }
