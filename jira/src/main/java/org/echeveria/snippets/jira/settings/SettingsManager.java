@@ -34,6 +34,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
+@SuppressWarnings({"unused", "unchecked"})
 public class SettingsManager {
 
   public static SettingsManager getOrCreate(String pluginKey) {
@@ -43,17 +44,18 @@ public class SettingsManager {
     return new SettingsManager(pluginSettings, pluginKey);
   }
 
-  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(SettingsManager.class);
-  @SuppressWarnings("unused")
+
   private static final Gson gson = new Gson();
 
   private final PluginSettings pluginSettings;
   private final String pluginKey;
+  private final SettingsManifest manifest;
 
   public SettingsManager(PluginSettings pluginSettings, String pluginKey) {
     this.pluginSettings = pluginSettings;
     this.pluginKey = pluginKey;
+    this.manifest = new SettingsManifest();
   }
 
   public String getPluginKey() {
@@ -86,14 +88,39 @@ public class SettingsManager {
     boolean isNewSettings = settings.getSettingsId() == -1;
     String settingsJson = gson.toJson(settings);
 
-    SettingsAdapter settingsAdapter = getSettingsAdapter(settings.getSettingsKey());
+    SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
     if (isNewSettings) {
-      settingsAdapter.add(settingsJson);
+      adapter.add(settingsJson);
+      if (adapter.getCount() == 0) {
+        manifest.add(settings.getSettingsKey());
+      }
     } else {
-      settingsAdapter.update(settingsJson, settings.getSettingsId());
+      adapter.update(settingsJson, settings.getSettingsId());
     }
 
-    return settingsAdapter.getCount();
+    return adapter.getCount();
+  }
+
+  public int removeSettings(Settings settings) {
+    boolean isNewSettings = settings.getSettingsId() == -1;
+    String settingsJson = gson.toJson(settings);
+
+    SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+    if (isNewSettings) {
+      throw new IllegalArgumentException("The settings does not exist.");
+    } else {
+      adapter.remove(settingsJson);
+      if (adapter.getCount() == 0) {
+        manifest.remove(settings.getSettingsKey());
+      }
+    }
+
+    return adapter.getCount();
+  }
+
+  public void removeAllSettings(String settingsKey) {
+    getSettingsAdapter(settingsKey).removeAll();
+    manifest.remove(settingsKey);
   }
 
   public Settings getSettings(String settingsKey) {
@@ -116,7 +143,7 @@ public class SettingsManager {
     private final String settingsKey;
 
     private SettingsAdapter(String settingsKey) {
-      this.settingsKey = settingsKey;
+      this.settingsKey = getSettingsStorageKey(settingsKey);
     }
 
     private List<String> getOrCreate() {
@@ -166,6 +193,36 @@ public class SettingsManager {
       List<String> settingsList = getOrCreate();
       settingsList.remove(settingsJson);
       pluginSettings.put(settingsKey, settingsList);
+    }
+
+    public void removeAll() {
+      pluginSettings.remove(settingsKey);
+    }
+
+  }
+
+  /**
+   * Provide a manifest of the settings so that we are not agnostic about what are existing.
+   */
+  private class SettingsManifest {
+
+    private final String settingsKey = "manifest";
+    private final SettingsAdapter adapter = getSettingsAdapter(settingsKey);
+
+    public void add(String settingsKey) {
+      if (!adapter.contains(settingsKey)) {
+        adapter.add(settingsKey);
+      }
+    }
+
+    public void remove(String settingsKey) {
+      if (adapter.contains(settingsKey)) {
+        adapter.remove(settingsKey);
+      }
+    }
+
+    public List<String> getList() {
+      return adapter.getOrCreate();
     }
 
   }
