@@ -50,45 +50,50 @@ public class SettingsManager {
 
   private final PluginSettings pluginSettings;
   private final String pluginKey;
-  private final SettingsManifest manifest;
 
   public SettingsManager(PluginSettings pluginSettings, String pluginKey) {
     this.pluginSettings = pluginSettings;
     this.pluginKey = pluginKey;
-    this.manifest = new SettingsManifest();
   }
 
   public String getPluginKey() {
     return pluginKey;
   }
 
-  public String getSettingsStorageKey(String settingsKey) {
+  // Internal methods
+
+  private String getSettingsStorageKey(String settingsKey) {
     return pluginKey + ":" + settingsKey;
+  }
+
+  private SettingsAdapter getSettingsAdapter(String settingsKey) {
+    return new SettingsAdapter(settingsKey);
   }
 
   // Settings
 
   public boolean hasSettings(String settingsKey) {
-    return manifest.has(settingsKey);
+    return getSettingsAdapter(settingsKey).isExist();
   }
 
   /**
-   * @param settings to be saved.
+   * Add or update a setting
+   *
+   * @param settings to be saved. (or updated)
    * @return numbers of settings. (saved, with the same settings key)
    */
   public int saveSettings(Settings settings) {
     boolean isNewSettings = settings.getSettingsId() == -1;
-    String json = gson.toJson(settings);
+    String settingsJson = gson.toJson(settings);
 
-    SettingsAdapter settingsAdapter = new SettingsAdapter(settings);
+    SettingsAdapter settingsAdapter = getSettingsAdapter(settings.getSettingsKey());
     if (isNewSettings) {
-      settingsAdapter.add(json);
-      manifest.add(settings.getSettingsKey());
+      settingsAdapter.add(settingsJson);
     } else {
-      settingsAdapter.update(settings.getSettingsId(), json);
+      settingsAdapter.update(settingsJson, settings.getSettingsId());
     }
 
-    return settingsAdapter.count();
+    return settingsAdapter.getCount();
   }
 
   public Settings getSettings(String settingsKey) {
@@ -103,16 +108,15 @@ public class SettingsManager {
     throw new UnsupportedOperationException("To be implemented.");
   }
 
+  /**
+   * Provide operations for the settings list of given key.
+   */
   private class SettingsAdapter {
 
     private final String settingsKey;
 
     private SettingsAdapter(String settingsKey) {
-      this.settingsKey = getSettingsStorageKey(settingsKey);
-    }
-
-    private SettingsAdapter(Settings settings) {
-      this.settingsKey = getSettingsStorageKey(settings.getSettingsKey());
+      this.settingsKey = settingsKey;
     }
 
     private List<String> getOrCreate() {
@@ -132,52 +136,36 @@ public class SettingsManager {
      * The method assumes the settings is exist.
      */
     public boolean isEmpty() {
+      if (!isExist()) {
+        return true;
+      }
       return getOrCreate().isEmpty();
     }
 
-    public int count() {
+    public int getCount() {
       return getOrCreate().size();
     }
 
-    public boolean has(String setting) {
-      return getOrCreate().contains(setting);
+    public boolean contains(String settingsJson) {
+      return getOrCreate().contains(settingsJson);
     }
 
-    public void add(String setting) {
-      List<String> settings = getOrCreate();
-      settings.add(setting);
-      pluginSettings.put(settingsKey, settings);
+    public void add(String settingsJson) {
+      List<String> settingsList = getOrCreate();
+      settingsList.add(settingsJson);
+      pluginSettings.put(settingsKey, settingsList);
     }
 
-    public void update(int index, String setting) {
-      List<String> settings = getOrCreate();
-      settings.set(index, setting);
-      pluginSettings.put(settingsKey, setting);
+    public void update(String settingsJson, int index) {
+      List<String> settingsList = getOrCreate();
+      settingsList.set(index, settingsJson);
+      pluginSettings.put(settingsKey, settingsList);
     }
 
-    public void remove(String setting) {
-      List<String> settings = getOrCreate();
-      settings.remove(setting);
-      pluginSettings.put(settingsKey, settings);
-    }
-
-  }
-
-  private class SettingsManifest {
-
-    private Settings manifest = Settings.create("manifest");
-    private SettingsAdapter adapter = new SettingsAdapter(manifest);
-
-    public boolean has(String settingsKey) {
-      return adapter.has(settingsKey);
-    }
-
-    public void add(String settingsKey) {
-      adapter.add(settingsKey);
-    }
-
-    public void remove(String settingsKey) {
-      adapter.remove(settingsKey);
+    public void remove(String settingsJson) {
+      List<String> settingsList = getOrCreate();
+      settingsList.remove(settingsJson);
+      pluginSettings.put(settingsKey, settingsList);
     }
 
   }

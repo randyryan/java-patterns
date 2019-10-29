@@ -73,20 +73,28 @@ public class Initializer implements LifecycleAware, InitializingBean, Disposable
 
   @EventListener
   public void onPluginEnabled(PluginEnabledEvent pluginEnabledEvent) {
+    if (pluginEnabledEvent.getPlugin().getKey().equals(MyPluginComponent.PLUGIN_KEY)) {
+      testSettingsManager();
+    }
+  }
+
+  public void testSettingsManager() {
     Settings test_1 = Settings.create("test");
     Settings test_2 = Settings.create("test");
 
     int count_1 = settingsManager.saveSettings(test_1);
     int count_2 = settingsManager.saveSettings(test_2);
 
-    org.slf4j.LoggerFactory.getLogger(Initializer.class).info(
-        "************************************** " +
-        "SettingsManager.hasSettings(\"test\"): " +
-        settingsManager.hasSettings("test") +
-        "count_1: " +
-        count_1 +
-        "count_2: " +
-        count_2);
-    }
+    org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Initializer.class);
+
+    logger.info("************************************** ");
+    logger.info("SettingsManager.hasSettings(\"test\"): ");
+    logger.info(Boolean.toString(settingsManager.hasSettings("test")));
+    logger.info("count_1: ");
+    logger.info(Integer.toString(count_1));
+    logger.info("count_2: ");
+    logger.info(Integer.toString(count_2));
+    logger.info("************************************** ");
+  }
 
 }
