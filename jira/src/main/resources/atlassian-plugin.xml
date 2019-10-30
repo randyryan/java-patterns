@@ -8,13 +8,16 @@
     <param name="plugin-icon">images/pluginIcon.png</param>  
     <param name="plugin-logo">images/pluginLogo.png</param> 
   </plugin-info>  
-  <resource type="i18n" name="i18n" location="jira-snippets"/>
-  <webwork1 name="Plugin Settings Viewer" i18n-name-key="plugin-settings-viewer.name" key="plugin-settings-viewer"> 
-    <description key="plugin-settings-viewer.description">View and manipulate PluginSettings.</description>  
+  <resource type="i18n" name="i18n" location="jira-snippets"/>  
+  <webwork1 name="Settings Viewer" i18n-name-key="settings-viewer.name" key="settings-viewer">
+    <description key="settings-viewer.description">View and manipulate PluginSettings.</description>
     <actions> 
-      <action name="org.echeveria.snippets.jira.webwork.PluginSettingsViewerAction" alias="PluginSettingsViewer"> 
-        <view name="view">/plugin-settings-viewer/view.vm</view> 
+      <action name="org.echeveria.snippets.jira.settings.SettingsViewerAction" alias="SettingsViewer">
+        <view name="view">/settings-viewer/view.vm</view>
       </action> 
     </actions> 
-  </webwork1>
+  </webwork1>  
+  <rest name="Settings Resource" i18n-name-key="settings-resource.name" key="settings-resource" path="/settingsresource" version="1.0">
+    <description key="settings-resource.description">Settings REST Resources</description>
+  </rest>
 </atlassian-plugin>

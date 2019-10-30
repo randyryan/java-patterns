@@ -73,8 +73,11 @@ public class Initializer implements LifecycleAware, InitializingBean, Disposable
 
   @EventListener
   public void onPluginEnabled(PluginEnabledEvent pluginEnabledEvent) {
-    if (pluginEnabledEvent.getPlugin().getKey().equals(MyPluginComponent.PLUGIN_KEY)) {
+    String pluginKey = pluginEnabledEvent.getPlugin().getKey();
+    if (pluginKey.equals(MyPluginComponent.PLUGIN_KEY)) {
       testSettingsManager();
+    } else {
+      org.slf4j.LoggerFactory.getLogger(Initializer.class).info(pluginKey);
     }
   }
 

@@ -24,11 +24,12 @@
 
 package it.org.echeveria.snippets.jira;
 
+import org.echeveria.snippets.jira.api.MyPluginComponent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import org.echeveria.snippets.jira.api.MyPluginComponent;
 import com.atlassian.sal.api.ApplicationProperties;
 
 @RunWith(AtlassianPluginsTestRunner.class)

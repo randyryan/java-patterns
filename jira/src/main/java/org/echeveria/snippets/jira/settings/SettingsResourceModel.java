@@ -21,22 +21,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package org.echeveria.snippets.jira.webwork;
+package org.echeveria.snippets.jira.settings;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import com.atlassian.jira.web.action.JiraWebActionSupport;
+@XmlRootElement(name = "message")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class SettingsResourceModel {
 
-public class PluginSettingsViewerAction extends JiraWebActionSupport {
+  @XmlElement(name = "value")
+  private String message;
 
-  public static final String VIEW = "view";
+  public SettingsResourceModel() {
+  }
 
-  private static final Logger log = LoggerFactory.getLogger(PluginSettingsViewerAction.class);
+  public SettingsResourceModel(String message) {
+    this.message = message;
+  }
 
-  @Override
-  public String execute() throws Exception {
-    return PluginSettingsViewerAction.VIEW;
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
 }

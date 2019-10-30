@@ -22,35 +22,37 @@
  * THE SOFTWARE.
  */
 
-package ut.org.echeveria.snippets.jira.webwork;
+package ut.org.echeveria.snippets.jira.settings;
 
+import static org.junit.Assert.assertEquals;
+
+import javax.ws.rs.core.Response;
+
+import org.echeveria.snippets.jira.settings.SettingsResource;
+import org.echeveria.snippets.jira.settings.SettingsResourceModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.echeveria.snippets.jira.webwork.PluginSettingsViewerAction;
 
-import static org.mockito.Mockito.*;
+public class SettingsResourceTest {
 
-/**
- * @since 3.5
- */
-public class PluginSettingsViewerActionTest {
+    @Before
+    public void setup() {
 
-  @Before
-  public void setup() {
-  }
+    }
 
-  @After
-  public void tearDown() {
-  }
+    @After
+    public void tearDown() {
 
-  @Test(expected = Exception.class)
-  public void testSomething() throws Exception {
+    }
 
-    PluginSettingsViewerAction testClass = new PluginSettingsViewerAction();
+    @Test
+    public void messageIsValid() {
+        SettingsResource resource = new SettingsResource();
 
-    throw new Exception("PluginSettingsActionAction has no tests!");
+        Response response = resource.getMessage();
+        final SettingsResourceModel message = (SettingsResourceModel) response.getEntity();
 
-  }
-
+        assertEquals("wrong message","Hello World",message.getMessage());
+    }
 }

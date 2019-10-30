@@ -22,20 +22,33 @@
  * THE SOFTWARE.
  */
 
-package ut.org.echeveria.snippets.jira;
+package ut.org.echeveria.snippets.jira.settings;
 
-import static org.junit.Assert.assertEquals;
-
-import org.echeveria.snippets.jira.api.MyPluginComponent;
-import org.echeveria.snippets.jira.api.MyPluginComponentImpl;
+import org.echeveria.snippets.jira.settings.SettingsViewerAction;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-public class MyComponentUnitTest {
+/**
+ * @since 3.5
+ */
+public class SettingsViewerActionTest {
 
-  @Test
-  public void testMyName() {
-    MyPluginComponent component = new MyPluginComponentImpl(null);
-    assertEquals("names do not match!", "myComponent", component.getName());
+  @Before
+  public void setup() {
+  }
+
+  @After
+  public void tearDown() {
+  }
+
+  @Test(expected = Exception.class)
+  public void testSomething() throws Exception {
+
+    SettingsViewerAction testClass = new SettingsViewerAction();
+
+    throw new Exception("SettingsViewerAction has no tests!");
+
   }
 
 }
