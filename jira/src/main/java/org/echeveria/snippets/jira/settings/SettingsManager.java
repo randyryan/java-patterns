@@ -24,6 +24,7 @@
 package org.echeveria.snippets.jira.settings;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,16 +124,19 @@ public class SettingsManager {
     manifest.remove(settingsKey);
   }
 
-  public Settings getSettings(String settingsKey) {
-    throw new UnsupportedOperationException("To be implemented.");
-  }
-
   public <T> T getSettings(String settingsKey, Class<T> classOfT) {
-    throw new UnsupportedOperationException("To be implemented.");
+    return getSettings(settingsKey, classOfT, 0);
   }
 
-  public List<Settings> getAllSettings(String settingsKey) {
-    throw new UnsupportedOperationException("To be implemented.");
+  public <T> T getSettings(String settingsKey, Class<T> classOfT, int index) {
+    String settingsJson = getSettingsAdapter(settingsKey).getSettings(index);
+    return gson.fromJson(settingsJson, classOfT);
+  }
+
+  public <T> List<T> getAllSettings(String settingsKey, Class<T> classOfT) {
+    return getSettingsAdapter(settingsKey).getOrCreate().stream()
+            .map(settingsJson -> gson.fromJson(settingsJson, classOfT))
+            .collect(Collectors.toList());
   }
 
   /**
@@ -197,6 +201,10 @@ public class SettingsManager {
 
     public void removeAll() {
       pluginSettings.remove(settingsKey);
+    }
+
+    public String getSettings(int index) {
+      return getOrCreate().get(index);
     }
 
   }

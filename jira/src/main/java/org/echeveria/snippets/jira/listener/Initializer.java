@@ -125,6 +125,11 @@ public class Initializer implements LifecycleAware, InitializingBean, Disposable
     logger.info("After Adding Second Apple and First Peach ");
     settingsManager.saveSettings(apple_2);
     settingsManager.saveSettings(peach_1);
+    logger.info("settingsManager.hasSettings(\"peach\"): " + settingsManager.hasSettings("peach"));
+    logger.info("--------------- ");
+    settingsManager.removeAllSettings("apple");
+    logger.info("After Removing All Apples ");
+    logger.info("settingsManager.hasSettings(\"apple\"): " + settingsManager.hasSettings("apple"));
     logger.info("======================================== ");
   }
 
