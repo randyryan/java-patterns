@@ -17,7 +17,7 @@
       </action> 
     </actions> 
   </webwork1>  
-  <rest name="Settings Resource" i18n-name-key="settings-resource.name" key="settings-resource" path="/settingsresource" version="1.0">
+  <rest name="Settings Resource" i18n-name-key="settings-resource.name" key="settings-resource" path="/jira-snippets" version="1.0">
     <description key="settings-resource.description">Settings REST Resources</description>
   </rest>
 </atlassian-plugin>

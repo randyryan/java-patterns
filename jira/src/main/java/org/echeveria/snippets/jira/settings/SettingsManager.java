@@ -26,6 +26,8 @@ package org.echeveria.snippets.jira.settings;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +37,12 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({ "unused", "unchecked" })
 public class SettingsManager {
 
   public static SettingsManager getOrCreate(String pluginKey) {
-    PluginSettings pluginSettings = ComponentAccessor
-            .getOSGiComponentInstanceOfType(PluginSettingsFactory.class)
-            .createGlobalSettings();
+    PluginSettings pluginSettings = ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class)
+        .createGlobalSettings();
     return new SettingsManager(pluginSettings, pluginKey);
   }
 
@@ -82,7 +83,8 @@ public class SettingsManager {
   /**
    * Add or update a setting
    *
-   * @param settings to be saved. (or updated)
+   * @param settings
+   *          to be saved. (or updated)
    * @return numbers of settings. (saved, with the same settings key)
    */
   public int saveSettings(Settings settings) {
@@ -92,8 +94,12 @@ public class SettingsManager {
     SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
     if (isNewSettings) {
       adapter.add(settingsJson);
-      if (adapter.getCount() == 0) {
-        manifest.add(settings.getSettingsKey());
+//      if (adapter.getCount() == 0) {
+//        manifest.add(settings.getSettingsKey());
+//      }
+      String settingsKey = settings.getSettingsKey();
+      if (!manifest.getList().contains(settingsKey)) {
+        manifest.add(settingsKey);
       }
     } else {
       adapter.update(settingsJson, settings.getSettingsId());
@@ -124,10 +130,12 @@ public class SettingsManager {
     manifest.remove(settingsKey);
   }
 
+  @Nullable
   public <T> T getSettings(String settingsKey, Class<T> classOfT) {
     return getSettings(settingsKey, classOfT, 0);
   }
 
+  @Nullable
   public <T> T getSettings(String settingsKey, Class<T> classOfT, int index) {
     String settingsJson = getSettingsAdapter(settingsKey).getSettings(index);
     return gson.fromJson(settingsJson, classOfT);
@@ -135,8 +143,11 @@ public class SettingsManager {
 
   public <T> List<T> getAllSettings(String settingsKey, Class<T> classOfT) {
     return getSettingsAdapter(settingsKey).getOrCreate().stream()
-            .map(settingsJson -> gson.fromJson(settingsJson, classOfT))
-            .collect(Collectors.toList());
+        .map(settingsJson -> gson.fromJson(settingsJson, classOfT)).collect(Collectors.toList());
+  }
+
+  public List<String> getManifest() {
+    return manifest.getList();
   }
 
   /**
@@ -210,7 +221,8 @@ public class SettingsManager {
   }
 
   /**
-   * Provide a manifest of the settings so that we are not agnostic about what are existing.
+   * Provide a manifest of the settings so that we are not agnostic about what
+   * are existing.
    */
   private class SettingsManifest {
 

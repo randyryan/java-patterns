@@ -43,7 +43,7 @@ public class MyPluginComponentImpl implements MyPluginComponent {
   }
 
   public String getName() {
-    if(applicationProperties != null) {
+    if (applicationProperties != null) {
       return "myComponent:" + applicationProperties.getDisplayName();
     }
     return "myComponent";

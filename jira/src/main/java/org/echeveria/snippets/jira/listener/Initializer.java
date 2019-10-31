@@ -26,7 +26,6 @@ package org.echeveria.snippets.jira.listener;
 import javax.inject.Inject;
 
 import org.echeveria.snippets.jira.api.MyPluginComponent;
-import org.echeveria.snippets.jira.settings.Settings;
 import org.echeveria.snippets.jira.settings.SettingsManager;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -75,65 +74,8 @@ public class Initializer implements LifecycleAware, InitializingBean, Disposable
   public void onPluginEnabled(PluginEnabledEvent pluginEnabledEvent) {
     String pluginKey = pluginEnabledEvent.getPlugin().getKey();
     if (pluginKey.equals(MyPluginComponent.PLUGIN_KEY)) {
-      testSettingsManager();
-    } else {
-      org.slf4j.LoggerFactory.getLogger(Initializer.class).info(pluginKey);
+      // Do our plug-in initialization here.
     }
-  }
-
-  class Fruit extends Settings {
-
-    protected String name;
-
-    protected Fruit(String settingsKey, int settingsId) {
-      super(settingsKey, settingsId);
-    }
-
-  }
-
-  class Apple extends Fruit {
-
-    protected Apple(String settingsKey, int settingsId) {
-      super(settingsKey, settingsId);
-    }
-
-  }
-
-  class Peach extends Fruit {
-
-    protected Peach(String settingsKey, int settingsId) {
-      super(settingsKey, settingsId);
-    }
-
-  }
-
-  public void testSettingsManager() {
-    Apple apple_1 = new Apple("apple", -1);
-    apple_1.name = "Apple 1";
-    Apple apple_2 = new Apple("apple", -1);
-    apple_2.name = "Apple 2";
-    Peach peach_1 = new Peach("peach", -1);
-    peach_1.name = "Peach 1";
-
-    org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Initializer.class);
-
-    logger.info("======================================== ");
-    logger.info("Before Adding First Apple ");
-    logger.info("settingsManager.hasSettings(\"apple\"): " + settingsManager.hasSettings("apple"));
-    logger.info("--------------- ");
-    settingsManager.saveSettings(apple_1);
-    logger.info("After Adding First Apple ");
-    logger.info("settingsManager.hasSettings(\"apple\"): " + settingsManager.hasSettings("apple"));
-    logger.info("--------------- ");
-    logger.info("After Adding Second Apple and First Peach ");
-    settingsManager.saveSettings(apple_2);
-    settingsManager.saveSettings(peach_1);
-    logger.info("settingsManager.hasSettings(\"peach\"): " + settingsManager.hasSettings("peach"));
-    logger.info("--------------- ");
-    settingsManager.removeAllSettings("apple");
-    logger.info("After Removing All Apples ");
-    logger.info("settingsManager.hasSettings(\"apple\"): " + settingsManager.hasSettings("apple"));
-    logger.info("======================================== ");
   }
 
 }
