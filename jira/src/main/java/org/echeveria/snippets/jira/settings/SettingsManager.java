@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
@@ -87,7 +88,7 @@ public class SettingsManager {
   // Settings
 
   public boolean hasSettings(String settingsKey) {
-    return getSettingsAdapter(settingsKey).isExist();
+    return manifest.has(settingsKey);
   }
 
   /**
@@ -97,15 +98,17 @@ public class SettingsManager {
    * @return numbers of settings. (saved, with the same settings key)
    */
   public int saveSettings(Settings settings) {
-    boolean isNewSettings = settings.getSettingsId() == -1;
-    String settingsJson = gson.toJson(settings);
-
     SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+    boolean isNewSettings = settings.getSettingsId() == -1;
+
+    if (isNewSettings) {
+      int settingsId = adapter.getCount(); // Starting with 0, the second would be 1.
+      settings.setSettingsId(settingsId);
+    }
+
+    String settingsJson = gson.toJson(settings);
     if (isNewSettings) {
       adapter.add(settingsJson);
-//      if (adapter.getCount() == 0) {
-//        manifest.add(settings.getSettingsKey());
-//      }
       String settingsKey = settings.getSettingsKey();
       if (!manifest.getList().contains(settingsKey)) {
         manifest.add(settingsKey);
@@ -118,13 +121,13 @@ public class SettingsManager {
   }
 
   public int removeSettings(Settings settings) {
-    boolean isNewSettings = settings.getSettingsId() == -1;
-    String settingsJson = gson.toJson(settings);
-
     SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+    boolean isNewSettings = settings.getSettingsId() == -1;
+
     if (isNewSettings) {
-      throw new IllegalArgumentException("The settings does not exist.");
+      throw new IllegalArgumentException("Cannot remove settings that does not exist yet.");
     } else {
+      String settingsJson = gson.toJson(settings);
       adapter.remove(settingsJson);
       if (adapter.getCount() == 0) {
         manifest.remove(settings.getSettingsKey());
@@ -250,8 +253,12 @@ public class SettingsManager {
       }
     }
 
+    public boolean has(String settingsKey) {
+      return adapter.contains(settingsKey);
+    }
+
     public List<String> getList() {
-      return adapter.getOrCreate();
+      return ImmutableList.copyOf(adapter.getOrCreate());
     }
 
   }

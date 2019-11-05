@@ -49,4 +49,8 @@ public class Settings {
     return settingsId;
   }
 
+  void setSettingsId(int settingsId) {
+    this.settingsId = settingsId;
+  }
+
 }
