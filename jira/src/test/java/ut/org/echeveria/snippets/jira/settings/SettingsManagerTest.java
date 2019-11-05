@@ -112,6 +112,7 @@ public class SettingsManagerTest {
 
     echeveria_colorata.setSynonym("Echeveria lindsayana E.Walther");
     settingsManager.saveSettings(echeveria_colorata);
+    echeveria_colorata = settingsManager.getSettings(settingsKey, Echeveria.class);
 
     assertThat(echeveria_colorata.hasSynonym(), is(true));
     assertThat(echeveria_colorata.getSynonym(), is("Echeveria lindsayana E.Walther"));
