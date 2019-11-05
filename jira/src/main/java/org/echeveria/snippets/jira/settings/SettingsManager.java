@@ -41,8 +41,18 @@ import com.google.gson.Gson;
 public class SettingsManager {
 
   public static SettingsManager getOrCreate(String pluginKey) {
-    PluginSettings pluginSettings = ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class)
-        .createGlobalSettings();
+    PluginSettingsFactory pluginSettingsFactory =
+            ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
+    PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
+    return new SettingsManager(pluginSettings, pluginKey);
+  }
+
+  public static SettingsManager getOrCreate(PluginSettingsFactory pluginSettingsFactory, String pluginKey) {
+    PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
+    return new SettingsManager(pluginSettings, pluginKey);
+  }
+
+  public static SettingsManager getOrCreate(PluginSettings pluginSettings, String pluginKey) {
     return new SettingsManager(pluginSettings, pluginKey);
   }
 
