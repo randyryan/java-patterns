@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -90,7 +91,33 @@ public class SettingsManagerTest {
     assertThat(settingsManager.getPluginKey(), is(MyPluginComponent.PLUGIN_KEY));
   }
 
-  // Settings Manifest tests
+  // Settings saving test
+
+  @Test
+  public void testSaveSettings() {
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+
+    assertThat(settingsManager.hasSettings("echeveria"), is(true));
+  }
+
+  @Test
+  public void testUpdateSettings() {
+    String settingsKey = "echeveria";
+
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+
+    Echeveria echeveria_colorata = settingsManager.getSettings(settingsKey, Echeveria.class);
+
+    assertThat(echeveria_colorata.hasSynonym(), is(false));
+
+    echeveria_colorata.setSynonym("Echeveria lindsayana E.Walther");
+    settingsManager.saveSettings(echeveria_colorata);
+
+    assertThat(echeveria_colorata.hasSynonym(), is(true));
+    assertThat(echeveria_colorata.getSynonym(), is("Echeveria lindsayana E.Walther"));
+  }
+
+  // Settings manifest tests
 
   @Test
   public void testManifestShouldBeEmpty() {

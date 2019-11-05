@@ -26,6 +26,8 @@ package ut.org.echeveria.snippets.jira.settings;
 
 import org.echeveria.snippets.jira.settings.Settings;
 
+import com.google.common.base.Strings;
+
 class SettingsSample {
 
   static CrassulaceaeBuilder<Echeveria> echeveria() {
@@ -89,7 +91,29 @@ class SettingsSample {
         .build();
   }
 
-  static abstract class Crassulaceae extends Settings {
+  static abstract class Plant extends Settings {
+
+    protected String synonym;
+
+    Plant(String settingsKey, int settingsId) {
+      super(settingsKey, settingsId);
+    }
+
+    void setSynonym(String synonym) {
+      this.synonym = synonym;
+    }
+
+    public boolean hasSynonym() {
+      return !Strings.isNullOrEmpty(synonym);
+    }
+
+    public String getSynonym() {
+      return synonym;
+    }
+
+  }
+
+  static abstract class Crassulaceae extends Plant {
 
     protected String genus;
     protected String species;
