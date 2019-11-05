@@ -24,6 +24,10 @@
 
 package ut.org.echeveria.snippets.jira.settings;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +41,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
@@ -65,10 +68,10 @@ public class SettingsManagerTest {
     ArgumentCaptor<String> settingsKeyArg = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<List<String>> settingsArg = ArgumentCaptor.forClass(List.class);
 
-    Mockito.when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
-    Mockito.when(pluginSettings.get(settingsKeyArg.capture())).thenAnswer(
+    when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
+    when(pluginSettings.get(settingsKeyArg.capture())).thenAnswer(
         (Answer<List<String>>) invocation -> settingsMap.get(settingsKeyArg.getValue()));
-    Mockito.when(pluginSettings.put(settingsKeyArg.capture(), settingsArg.capture())).thenAnswer(
+    when(pluginSettings.put(settingsKeyArg.capture(), settingsArg.capture())).thenAnswer(
         (Answer<List<String>>) invocation -> settingsMap.put(settingsKeyArg.getValue(), settingsArg.getValue()));
   }
 
@@ -112,6 +115,11 @@ public class SettingsManagerTest {
     settingsManager.saveSettings(graptopetalum_amethystinum);
     settingsManager.saveSettings(graptopetalum_macdougallii);
     settingsManager.saveSettings(pachyphytum_oviferum);
+  }
+
+  @Test
+  public void testPluginKey() {
+    assertThat(settingsManager.getPluginKey(), is(MyPluginComponent.PLUGIN_KEY));
   }
 
   @Test()

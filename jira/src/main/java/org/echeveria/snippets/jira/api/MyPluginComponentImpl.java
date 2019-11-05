@@ -30,7 +30,7 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.ApplicationProperties;
 
-@ExportAsService({ MyPluginComponent.class })
+@ExportAsService(MyPluginComponent.class)
 @Named("myPluginComponent")
 public class MyPluginComponentImpl implements MyPluginComponent {
 

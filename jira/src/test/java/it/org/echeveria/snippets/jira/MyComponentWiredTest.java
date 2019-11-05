@@ -38,15 +38,17 @@ public class MyComponentWiredTest {
   private final ApplicationProperties applicationProperties;
   private final MyPluginComponent myPluginComponent;
 
-  public MyComponentWiredTest(ApplicationProperties applicationProperties, MyPluginComponent myPluginComponent) {
+  public MyComponentWiredTest(ApplicationProperties applicationProperties,
+                              MyPluginComponent myPluginComponent) {
     this.applicationProperties = applicationProperties;
     this.myPluginComponent = myPluginComponent;
   }
 
   @Test
   public void testMyName() {
-    Assert.assertEquals("names do not match!", "myComponent:" + applicationProperties.getDisplayName(),
-        myPluginComponent.getName());
+    Assert.assertEquals("names do not match!",
+                        "myComponent:" + applicationProperties.getDisplayName(),
+                         myPluginComponent.getName());
   }
 
 }

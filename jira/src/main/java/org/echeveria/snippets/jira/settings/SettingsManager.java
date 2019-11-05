@@ -37,12 +37,12 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
-@SuppressWarnings({ "unused", "unchecked" })
+@SuppressWarnings({"unused", "unchecked"})
 public class SettingsManager {
 
   public static SettingsManager getOrCreate(String pluginKey) {
     PluginSettingsFactory pluginSettingsFactory =
-            ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
+        ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
     PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
     return new SettingsManager(pluginSettings, pluginKey);
   }
@@ -93,8 +93,7 @@ public class SettingsManager {
   /**
    * Add or update a setting
    *
-   * @param settings
-   *          to be saved. (or updated)
+   * @param settings to be saved. (or updated)
    * @return numbers of settings. (saved, with the same settings key)
    */
   public int saveSettings(Settings settings) {
@@ -153,7 +152,8 @@ public class SettingsManager {
 
   public <T> List<T> getAllSettings(String settingsKey, Class<T> classOfT) {
     return getSettingsAdapter(settingsKey).getOrCreate().stream()
-        .map(settingsJson -> gson.fromJson(settingsJson, classOfT)).collect(Collectors.toList());
+        .map(settingsJson -> gson.fromJson(settingsJson, classOfT))
+        .collect(Collectors.toList());
   }
 
   public List<String> getManifest() {
@@ -231,8 +231,7 @@ public class SettingsManager {
   }
 
   /**
-   * Provide a manifest of the settings so that we are not agnostic about what
-   * are existing.
+   * Provide a manifest of the settings so that we are not agnostic about what are existing.
    */
   private class SettingsManifest {
 
