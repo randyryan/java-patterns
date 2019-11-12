@@ -81,8 +81,8 @@ public class SettingsManager {
     return pluginKey + ":" + settingsKey;
   }
 
-  private SettingsAdapter getSettingsAdapter(String settingsKey) {
-    return new SettingsAdapter(settingsKey);
+  private SequencedSettingsAdapter getSettingsAdapter(String settingsKey) {
+    return new SequencedSettingsAdapter(settingsKey);
   }
 
   // Settings
@@ -97,8 +97,8 @@ public class SettingsManager {
    * @param settings to be saved. (or updated)
    * @return numbers of settings. (saved, with the same settings key)
    */
-  public int saveSettings(Settings settings) {
-    SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+  public int saveSettings(Settings.Sequenced settings) {
+    SequencedSettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
     boolean isNewSettings = settings.getSettingsId() == -1;
 
     if (isNewSettings) {
@@ -120,8 +120,8 @@ public class SettingsManager {
     return adapter.getCount();
   }
 
-  public int removeSettings(Settings settings) {
-    SettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+  public int removeSettings(Settings.Sequenced settings) {
+    SequencedSettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
     boolean isNewSettings = settings.getSettingsId() == -1;
 
     if (isNewSettings) {
@@ -166,11 +166,11 @@ public class SettingsManager {
   /**
    * Provide operations for the settings list of given key.
    */
-  private class SettingsAdapter {
+  private class SequencedSettingsAdapter {
 
     private final String settingsKey;
 
-    private SettingsAdapter(String settingsKey) {
+    private SequencedSettingsAdapter(String settingsKey) {
       this.settingsKey = getSettingsStorageKey(settingsKey);
     }
 
@@ -239,7 +239,7 @@ public class SettingsManager {
   private class SettingsManifest {
 
     private final String settingsKey = "manifest";
-    private final SettingsAdapter adapter = getSettingsAdapter(settingsKey);
+    private final SequencedSettingsAdapter adapter = getSettingsAdapter(settingsKey);
 
     public void add(String settingsKey) {
       if (!adapter.contains(settingsKey)) {

@@ -23,15 +23,7 @@
 
 package org.echeveria.snippets.jira.settings;
 
-public class Settings {
-
-  public static Settings create(String settingsKey) {
-    return new Settings(settingsKey, -1);
-  }
-
-  public static Settings create(String settingsKey, int settingsId) {
-    return new Settings(settingsKey, settingsId);
-  }
+public abstract class Settings<T> {
 
   private final String settingsKey;
   private int settingsId;
@@ -51,6 +43,22 @@ public class Settings {
 
   void setSettingsId(int settingsId) {
     this.settingsId = settingsId;
+  }
+
+  public static class Sequenced extends Settings<Integer> {
+
+    public static Sequenced create(String settingsKey) {
+      return new Sequenced(settingsKey, -1);
+    }
+
+    public static Sequenced create(String settingsKey, int settingsId) {
+      return new Sequenced(settingsKey, settingsId);
+    }
+
+    protected Sequenced(String settingsKey, int settingsId) {
+      super(settingsKey, settingsId);
+    }
+
   }
 
 }

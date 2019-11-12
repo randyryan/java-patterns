@@ -22,76 +22,76 @@
  * THE SOFTWARE.
  */
 
-package ut.org.echeveria.snippets.jira.settings;
+package org.echeveria.snippets.jira.settings;
 
 import org.echeveria.snippets.jira.settings.Settings;
 
 import com.google.common.base.Strings;
 
-class SettingsSample {
+public final class SettingsSample {
 
-  static CrassulaceaeBuilder<Echeveria> echeveria() {
+  public static CrassulaceaeBuilder<Echeveria> echeveria() {
     return Echeveria.newEcheveria();
   }
 
-  static Echeveria echeveria_colorata() {
+  public static Echeveria echeveria_colorata() {
     return Echeveria.newEcheveria()
         .species("colorata")
         .author("E.Walther")
         .build();
   }
 
-  static Echeveria echeveria_derenbergii() {
+  public static Echeveria echeveria_derenbergii() {
     return Echeveria.newEcheveria()
         .species("derenbergii")
         .author("J.A.Purpus")
         .build();
   }
 
-  static Echeveria echeveria_elegans() {
+  public static Echeveria echeveria_elegans() {
     return Echeveria.newEcheveria()
         .species("elegans")
         .author("Rose")
         .build();
   }
 
-  static Echeveria echeveria_hyalina() {
+  public static Echeveria echeveria_hyalina() {
     return Echeveria.newEcheveria()
         .species("hyalina")
         .author("E.Walther")
         .build();
   }
 
-  static CrassulaceaeBuilder<Graptopetalum> graptopetalum() {
+  public static CrassulaceaeBuilder<Graptopetalum> graptopetalum() {
     return Graptopetalum.newGraptopetalum();
   }
 
-  static Graptopetalum graptopetalum_amethystinum() {
+  public static Graptopetalum graptopetalum_amethystinum() {
     return Graptopetalum.newGraptopetalum()
         .species("amethystinum")
         .author("(Rose) E.Walther")
         .build();
   }
 
-  static Graptopetalum graptopetalum_macdougallii() {
+  public static Graptopetalum graptopetalum_macdougallii() {
     return Graptopetalum.newGraptopetalum()
         .species("macdougallii")
         .author("Alexander")
         .build();
   }
 
-  static CrassulaceaeBuilder<Pachyphytum> pachyphytum() {
+  public static CrassulaceaeBuilder<Pachyphytum> pachyphytum() {
     return Pachyphytum.newPachyphytum();
   }
 
-  static Pachyphytum pachyphytum_oviferum() {
+  public static Pachyphytum pachyphytum_oviferum() {
     return Pachyphytum.newPachyphytum()
         .species("oviferum")
         .author("Purpus")
         .build();
   }
 
-  static abstract class Plant extends Settings {
+  public static abstract class Plant extends Settings.Sequenced {
 
     protected String synonym;
 
@@ -99,7 +99,7 @@ class SettingsSample {
       super(settingsKey, settingsId);
     }
 
-    void setSynonym(String synonym) {
+    public void setSynonym(String synonym) {
       this.synonym = synonym;
     }
 
@@ -113,7 +113,7 @@ class SettingsSample {
 
   }
 
-  static abstract class Crassulaceae extends Plant {
+  public static abstract class Crassulaceae extends Plant {
 
     protected String genus;
     protected String species;
@@ -142,7 +142,7 @@ class SettingsSample {
 
   }
 
-  static class CrassulaceaeBuilder<C extends Crassulaceae> {
+  public static class CrassulaceaeBuilder<C extends Crassulaceae> {
 
     static <C extends Crassulaceae> CrassulaceaeBuilder<C> get(C crassulaceae) {
       return new CrassulaceaeBuilder<C>(crassulaceae);
@@ -181,7 +181,7 @@ class SettingsSample {
 
   }
 
-  static class Echeveria extends Crassulaceae {
+  public static class Echeveria extends Crassulaceae {
 
     static CrassulaceaeBuilder<Echeveria> newEcheveria() {
       return CrassulaceaeBuilder.get(new Echeveria(-1))
@@ -194,7 +194,7 @@ class SettingsSample {
 
   }
 
-  static class Graptopetalum extends Crassulaceae {
+  public static class Graptopetalum extends Crassulaceae {
 
     static CrassulaceaeBuilder<Graptopetalum> newGraptopetalum() {
       return CrassulaceaeBuilder.get(new Graptopetalum(-1))
@@ -207,7 +207,7 @@ class SettingsSample {
 
   }
 
-  static class Pachyphytum extends Crassulaceae {
+  public static class Pachyphytum extends Crassulaceae {
 
     static CrassulaceaeBuilder<Pachyphytum> newPachyphytum() {
       return CrassulaceaeBuilder.get(new Pachyphytum(-1))
