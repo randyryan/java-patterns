@@ -43,7 +43,7 @@ public class SettingsManager {
 
   public static SettingsManager getOrCreate(String pluginKey) {
     PluginSettingsFactory pluginSettingsFactory =
-        ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
+            ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
     PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
     return new SettingsManager(pluginSettings, pluginKey);
   }
@@ -114,15 +114,14 @@ public class SettingsManager {
    */
   public int saveSettings(Settings.Sequenced settings) {
     SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settings.getSettingsKey());
-    boolean isNewSettings = settings.getSettingsId() == -1;
 
-    if (isNewSettings) {
+    if (settings.isNewIn(this)) {
       int settingsId = adapter.getCount(); // Starting with 0, the second would be 1.
       settings.setSettingsId(settingsId);
     }
 
     String settingsJson = gson.toJson(settings);
-    if (isNewSettings) {
+    if (settings.isNewIn(this)) {
       adapter.add(settingsJson);
       String settingsKey = settings.getSettingsKey();
       if (!manifest.getList().contains(settingsKey)) {
@@ -143,9 +142,8 @@ public class SettingsManager {
    */
   public int removeSettings(Settings.Sequenced settings) {
     SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settings.getSettingsKey());
-    boolean isNewSettings = settings.getSettingsId() == -1;
 
-    if (isNewSettings) {
+    if (settings.isNewIn(this)) {
       throw new IllegalArgumentException("Cannot remove settings that does not exist yet.");
     } else {
       String settingsJson = gson.toJson(settings);

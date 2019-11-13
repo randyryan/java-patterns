@@ -23,25 +23,53 @@
 
 package org.echeveria.snippets.jira.settings;
 
+import java.util.List;
+
+/**
+ * The base class for all settings types, your settings POJO should be sub-classing this class.
+ */
 public abstract class Settings<T> {
 
   private final String settingsKey;
-  private int settingsId;
+  private T settingsId;
 
-  protected Settings(String settingsKey, int settingsId) {
+  protected Settings(String settingsKey, T settingsId) {
     this.settingsKey = settingsKey;
     this.settingsId = settingsId;
   }
 
+  /**
+   * Returns the settings key of this settings type.
+   * @return the settings key of this settings type
+   */
   public String getSettingsKey() {
     return settingsKey;
   }
 
-  public int getSettingsId() {
+  /**
+   * Returns the settings ID of this individual settings.
+   * @return the settings ID of this individual settings
+   */
+  public T getSettingsId() {
     return settingsId;
   }
 
-  void setSettingsId(int settingsId) {
+  /**
+   * Returns true if the settings has been newly created.
+   * @return true if the settings has been newly created
+   */
+  public abstract boolean isNew();
+
+  /**
+   * Returns true if the settings has been newly created and yet to be saved in the specified
+   * settings manager.
+   *
+   * @param settingsManager to check if this settings is exist in
+   * @return true if the settings is yet to be saved in the specified settings manager
+   */
+  public abstract boolean isNewIn(SettingsManager settingsManager);
+
+  void setSettingsId(T settingsId) {
     this.settingsId = settingsId;
   }
 
@@ -57,6 +85,37 @@ public abstract class Settings<T> {
 
     protected Sequenced(String settingsKey, int settingsId) {
       super(settingsKey, settingsId);
+    }
+
+    @Override
+    public boolean isNew() {
+      return getSettingsId() == -1;
+    }
+
+    @Override
+    public boolean isNewIn(SettingsManager settingsManager) {
+      if (!settingsManager.hasSettings(getSettingsKey())) {
+        return true;
+      }
+
+      List<?> settingsList = settingsManager.getAllSettings(getSettingsKey(), getClass());
+      if (settingsList == null) {
+        return true;
+      }
+
+      Object settings = null;
+      try {
+        // The settings ID (in this implementation, the index in the list of the settings of the
+        // same type) may have been assigned at this point, for the settings to be save by using
+        // the set(index, e) of java.util.List.
+        // But to notice that having a "legitimate" index doesn't mean it's saved in the list, so
+        // we should query the list with the index to determine whether it's really new (in list).
+        settings = settingsList.get(getSettingsId());
+      } catch (IndexOutOfBoundsException e) {
+        return true;
+      }
+
+      return settings == null;
     }
 
   }
