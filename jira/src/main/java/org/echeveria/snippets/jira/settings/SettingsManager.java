@@ -81,24 +81,39 @@ public class SettingsManager {
     return pluginKey + ":" + settingsKey;
   }
 
-  private SequencedSettingsAdapter getSettingsAdapter(String settingsKey) {
+  private SequencedSettingsAdapter getSequencedSettingsAdapter(String settingsKey) {
     return new SequencedSettingsAdapter(settingsKey);
   }
 
   // Settings
 
+  /**
+   * Returns a list of the settings that are currently associated with the current settings manager,
+   * so that we are not agnostic about what are stored.
+   * @return a list of settings keys
+   */
+  public List<String> getManifest() {
+    return manifest.getList();
+  }
+
+  /**
+   * Query the Settings Manager about if the specified settings (key) exists.
+   *
+   * @param settingsKey to query the existence of settings
+   * @return true if there are settings of the specified settings key
+   */
   public boolean hasSettings(String settingsKey) {
     return manifest.has(settingsKey);
   }
 
   /**
-   * Add or update a setting
+   * Add or update the specified settings.
    *
-   * @param settings to be saved. (or updated)
-   * @return numbers of settings. (saved, with the same settings key)
+   * @param settings to be added or updated
+   * @return number the settings of the specified kind that currently exist
    */
   public int saveSettings(Settings.Sequenced settings) {
-    SequencedSettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+    SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settings.getSettingsKey());
     boolean isNewSettings = settings.getSettingsId() == -1;
 
     if (isNewSettings) {
@@ -120,8 +135,14 @@ public class SettingsManager {
     return adapter.getCount();
   }
 
+  /**
+   * Remove the specified the settings.
+   *
+   * @param settings to be removed.
+   * @return number the settings of the specified kind that currently exist
+   */
   public int removeSettings(Settings.Sequenced settings) {
-    SequencedSettingsAdapter adapter = getSettingsAdapter(settings.getSettingsKey());
+    SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settings.getSettingsKey());
     boolean isNewSettings = settings.getSettingsId() == -1;
 
     if (isNewSettings) {
@@ -137,30 +158,57 @@ public class SettingsManager {
     return adapter.getCount();
   }
 
+  /**
+   * Remove all settings of the specified settings key.
+   *
+   * @param settingsKey to remove all settings of
+   */
   public void removeAllSettings(String settingsKey) {
-    getSettingsAdapter(settingsKey).removeAll();
+    getSequencedSettingsAdapter(settingsKey).removeAll();
     manifest.remove(settingsKey);
   }
 
+  /**
+   * Retrieve the settings of the specified settings key and its class type, if there are multiple
+   * settings found with the specified settings key, the first one is returned.
+   *
+   * @param settingsKey to retrieve the settings
+   * @param classOfT to return the settings object generically
+   * @param <T> the type of the settings
+   * @return the settings object
+   */
   @Nullable
   public <T> T getSettings(String settingsKey, Class<T> classOfT) {
     return getSettings(settingsKey, classOfT, 0);
   }
 
+  /**
+   * Retrieve the settings of the specified settings key and its class type, of the specified index.
+   *
+   * @param settingsKey to retrieve the settings
+   * @param classOfT to return the settings object generically
+   * @param index of the settings
+   * @param <T> the type of the settings
+   * @return the settings object
+   */
   @Nullable
   public <T> T getSettings(String settingsKey, Class<T> classOfT, int index) {
-    String settingsJson = getSettingsAdapter(settingsKey).getSettings(index);
+    String settingsJson = getSequencedSettingsAdapter(settingsKey).getSettings(index);
     return gson.fromJson(settingsJson, classOfT);
   }
 
+  /**
+   * Retrieve all settings of the specified settings key as a list.
+   *
+   * @param settingsKey to retrive the settings
+   * @param classOfT to return the settings objects generically
+   * @param <T> the type of the settings
+   * @return the settings object list
+   */
   public <T> List<T> getAllSettings(String settingsKey, Class<T> classOfT) {
-    return getSettingsAdapter(settingsKey).getOrCreate().stream()
+    return getSequencedSettingsAdapter(settingsKey).getOrCreate().stream()
         .map(settingsJson -> gson.fromJson(settingsJson, classOfT))
         .collect(Collectors.toList());
-  }
-
-  public List<String> getManifest() {
-    return manifest.getList();
   }
 
   /**
@@ -239,7 +287,7 @@ public class SettingsManager {
   private class SettingsManifest {
 
     private final String settingsKey = "manifest";
-    private final SequencedSettingsAdapter adapter = getSettingsAdapter(settingsKey);
+    private final SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settingsKey);
 
     public void add(String settingsKey) {
       if (!adapter.contains(settingsKey)) {
