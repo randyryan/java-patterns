@@ -29,15 +29,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
+
 import org.echeveria.snippets.jira.api.MyPluginComponent;
 import org.echeveria.snippets.jira.settings.SettingsManager;
 import org.echeveria.snippets.jira.settings.SettingsSample;
 import org.echeveria.snippets.jira.settings.SettingsSample.Echeveria;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,8 +44,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import java.util.List;
-import java.util.Map;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsTest {
