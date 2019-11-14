@@ -88,15 +88,6 @@ public class SettingsManager {
   // Settings
 
   /**
-   * Returns a list of the settings that are currently associated with the current settings manager,
-   * so that we are not agnostic about what are stored.
-   * @return a list of settings keys
-   */
-  public List<String> getManifest() {
-    return manifest.getList();
-  }
-
-  /**
    * Query the Settings Manager about if the specified settings (key) exists.
    *
    * @param settingsKey to query the existence of settings
@@ -214,6 +205,15 @@ public class SettingsManager {
     }
   }
 
+  /**
+   * Returns a list of the settings that are currently associated with the current settings manager,
+   * so that we are not agnostic about what are stored.
+   * @return a list of settings keys
+   */
+  public List<String> getManifest() {
+    return manifest.getList();
+  }
+
   protected abstract class SettingsAdapter {
 
     protected final String settingsKey;
@@ -233,10 +233,11 @@ public class SettingsManager {
   }
 
   /**
-   * Adapts the plugin settings of a given settings key to java.util.List. The toList() methods
-   * returns an immutable list for querying methods such as size(), isEmpty(), contains(o), and
-   * get(i). The change making methods such as add(o), set(i, o), remove(i), and remove(o) operates
-   * on a modifiable list and save the list back to plugin settings.
+   * Adapts the plugin settings of a given settings key to a java.util.List-alike object.
+   *
+   * The toList() methods returns an immutable list for outside accesses and fend off modifying
+   * operations, while mutational operations such as add(o), set(i, o), remove(i), and remove(o)
+   * operate on a modifiable list and then save the list back to plugin settings.
    */
   private class SequencedSettingsAdapter extends SettingsAdapter {
 
@@ -245,12 +246,12 @@ public class SettingsManager {
     }
 
     private List<String> toListInternal() {
-      List<String> settings = (List<String>) pluginSettings.get(settingsKey);
-      if (settings == null) {
-        settings = Lists.newArrayList();
-        pluginSettings.put(settingsKey, settings);
+      List<String> settingsList = (List<String>) pluginSettings.get(settingsKey);
+      if (settingsList == null) {
+        settingsList = Lists.newArrayList();
+        pluginSettings.put(settingsKey, settingsList);
       }
-      return settings;
+      return settingsList;
     }
 
     private List<String> toList() {
@@ -258,43 +259,43 @@ public class SettingsManager {
     }
 
     public int size() {
-      return toList().size();
-    }
-
-    public boolean isEmpty() {
-      return toList().isEmpty();
+      return toListInternal().size();
     }
 
     public boolean contains(String settingsJson) {
-      return toList().contains(settingsJson);
+      return toListInternal().contains(settingsJson);
     }
 
-    public void add(String settingsJson) {
+    public boolean add(String settingsJson) {
       List<String> settingsList = toListInternal();
-      settingsList.add(settingsJson);
+      boolean returnValue = settingsList.add(settingsJson);
       pluginSettings.put(settingsKey, settingsList);
+      return returnValue;
     }
 
     public String get(int index) {
       return toList().get(index);
     }
 
-    public void set(int index, String settingsJson) {
+    public String set(int index, String settingsJson) {
       List<String> settingsList = toListInternal();
-      settingsList.set(index, settingsJson);
+      String returnValue = settingsList.set(index, settingsJson);
       pluginSettings.put(settingsKey, settingsList);
+      return returnValue;
     }
 
-    public void remove(int index) {
+    public String remove(int index) {
       List<String> settingsList = toListInternal();
-      settingsList.remove(index);
+      String returnValue = settingsList.remove(index);
       pluginSettings.put(settingsKey, settingsList);
+      return returnValue;
     }
 
-    public void remove(String settingsJson) {
+    public boolean remove(String settingsJson) {
       List<String> settingsList = toListInternal();
-      settingsList.remove(settingsJson);
+      boolean returnValue = settingsList.remove(settingsJson);
       pluginSettings.put(settingsKey, settingsList);
+      return returnValue;
     }
 
   }

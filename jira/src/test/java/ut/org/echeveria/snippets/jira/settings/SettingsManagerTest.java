@@ -136,72 +136,6 @@ public class SettingsManagerTest {
     assertThat(settingsManager.hasSettings(settingsKey), is(false));
   }
 
-  // Settings manifest tests
-
-  @Test
-  public void testManifestShouldBeEmpty() {
-    assertThat(settingsManager.getManifest(), empty());
-  }
-
-  @Test
-  public void testManifestShouldBeOne() {
-    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
-
-    assertThat(settingsManager.getManifest().size(), is(1));
-
-    settingsManager.saveSettings(SettingsSample.echeveria_derenbergii());
-
-    assertThat(settingsManager.getManifest().size(), is(1));
-  }
-
-  @Test
-  public void testManifestShouldBeTwo() {
-    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
-    settingsManager.saveSettings(SettingsSample.graptopetalum_amethystinum());
-
-    assertThat(settingsManager.getManifest().size(), is(2));
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void testManifestCannotBeModifiedDirectly() {
-    settingsManager.getManifest().add("test");
-  }
-
-  @Test
-  public void testManifestAfterSavingSettings() {
-    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
-    settingsManager.saveSettings(SettingsSample.echeveria_derenbergii());
-    settingsManager.saveSettings(SettingsSample.echeveria_elegans());
-    settingsManager.saveSettings(SettingsSample.echeveria_hyalina());
-    settingsManager.saveSettings(SettingsSample.graptopetalum_amethystinum());
-    settingsManager.saveSettings(SettingsSample.graptopetalum_macdougallii());
-    settingsManager.saveSettings(SettingsSample.pachyphytum_oviferum());
-
-    List<String> manifest = settingsManager.getManifest();
-
-    assertThat(manifest.size(), is(3));
-    assertThat(manifest, hasItem("echeveria"));
-    assertThat(manifest, hasItem("graptopetalum"));
-    assertThat(manifest, hasItem("pachyphytum"));
-  }
-
-  @Test
-  public void testManifestAfterRemovingSettings() {
-    String settingsKey = "echeveria"; // The specific settings
-
-    assertThat(settingsManager.hasSettings(settingsKey), is(false));
-
-    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
-
-    assertThat(settingsManager.hasSettings(settingsKey), is(true));
-
-    settingsManager.removeAllSettings(settingsKey);
-
-    assertThat(settingsManager.hasSettings(settingsKey), is(false));
-  }
-
-  // Settings Retrieving tests
-
   @Test
   public void testGetSettings() {
     String settingsKey = "echeveria";
@@ -281,6 +215,70 @@ public class SettingsManagerTest {
 
     assertThat(echeverias.get(3).getSettingsId(), is(3));
     assertThat(echeverias.get(3).getSpecies(), is("hyalina"));
+  }
+
+  // Settings manifest tests
+
+  @Test
+  public void testManifestShouldBeEmpty() {
+    assertThat(settingsManager.getManifest(), empty());
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void testManifestCannotBeModifiedDirectly() {
+    settingsManager.getManifest().add("test");
+  }
+
+  @Test
+  public void testManifestShouldBeOne() {
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+
+    assertThat(settingsManager.getManifest().size(), is(1));
+
+    settingsManager.saveSettings(SettingsSample.echeveria_derenbergii());
+
+    assertThat(settingsManager.getManifest().size(), is(1));
+  }
+
+  @Test
+  public void testManifestShouldBeTwo() {
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+    settingsManager.saveSettings(SettingsSample.graptopetalum_amethystinum());
+
+    assertThat(settingsManager.getManifest().size(), is(2));
+  }
+
+  @Test
+  public void testManifestAfterSavingSettings() {
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+    settingsManager.saveSettings(SettingsSample.echeveria_derenbergii());
+    settingsManager.saveSettings(SettingsSample.echeveria_elegans());
+    settingsManager.saveSettings(SettingsSample.echeveria_hyalina());
+    settingsManager.saveSettings(SettingsSample.graptopetalum_amethystinum());
+    settingsManager.saveSettings(SettingsSample.graptopetalum_macdougallii());
+    settingsManager.saveSettings(SettingsSample.pachyphytum_oviferum());
+
+    List<String> manifest = settingsManager.getManifest();
+
+    assertThat(manifest.size(), is(3));
+    assertThat(manifest, hasItem("echeveria"));
+    assertThat(manifest, hasItem("graptopetalum"));
+    assertThat(manifest, hasItem("pachyphytum"));
+  }
+
+  @Test
+  public void testManifestAfterRemovingSettings() {
+    String settingsKey = "echeveria"; // The specific settings
+
+    assertThat(settingsManager.hasSettings(settingsKey), is(false));
+
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+
+    assertThat(settingsManager.hasSettings(settingsKey), is(true));
+
+    settingsManager.removeAllSettings(settingsKey);
+
+    assertThat(settingsManager.hasSettings(settingsKey), is(false));
   }
 
   @After
