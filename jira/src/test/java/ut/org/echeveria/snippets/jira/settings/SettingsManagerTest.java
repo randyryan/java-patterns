@@ -27,6 +27,7 @@ package ut.org.echeveria.snippets.jira.settings;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -90,13 +91,18 @@ public class SettingsManagerTest {
     assertThat(settingsManager.getPluginKey(), is(MyPluginComponent.PLUGIN_KEY));
   }
 
-  // Settings saving test
+  // Settings CRUD tests
 
   @Test
   public void testSaveSettings() {
+    String settingsKey = "echeveria";
+
     settingsManager.saveSettings(SettingsSample.echeveria_colorata());
 
-    assertThat(settingsManager.hasSettings("echeveria"), is(true));
+    Echeveria echeveria_colorata = settingsManager.getSettings(settingsKey, Echeveria.class);
+
+    assertThat(settingsManager.hasSettings(settingsKey), is(true));
+    assertThat(echeveria_colorata.getSettingsId(), is(0));
   }
 
   @Test
@@ -117,11 +123,24 @@ public class SettingsManagerTest {
     assertThat(echeveria_colorata.getSynonym(), is("Echeveria lindsayana E.Walther"));
   }
 
+  @Test
+  public void testRemoveSettings() {
+    String settingsKey = "echeveria";
+
+    settingsManager.saveSettings(SettingsSample.echeveria_colorata());
+
+    Echeveria echeveria_colorata = settingsManager.getSettings(settingsKey, Echeveria.class);
+
+    settingsManager.removeSettings(echeveria_colorata);
+
+    assertThat(settingsManager.hasSettings(settingsKey), is(false));
+  }
+
   // Settings manifest tests
 
   @Test
   public void testManifestShouldBeEmpty() {
-    assertThat(settingsManager.getManifest().size(), is(0));
+    assertThat(settingsManager.getManifest(), empty());
   }
 
   @Test
@@ -213,6 +232,24 @@ public class SettingsManagerTest {
     assertThat(echeveria_derenbergii.getGenus(), is("Echeveria"));
     assertThat(echeveria_derenbergii.getSpecies(), is("derenbergii"));
     assertThat(echeveria_derenbergii.getAuthor(), is("J.A.Purpus"));
+  }
+
+  @Test
+  public void testGetAllSettingsShouldBeEmpty() {
+    String settingsKey = "echeveria";
+
+    List<Echeveria> echeverias = settingsManager.getAllSettings(settingsKey, Echeveria.class);
+
+    assertThat(echeverias, empty());
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void testGetAllSettingsCannotBeModifiedDirectly() {
+    String settingsKey = "echeveria";
+
+    List<Echeveria> echeverias = settingsManager.getAllSettings(settingsKey, Echeveria.class);
+
+    echeverias.add(SettingsSample.echeveria_derenbergii());
   }
 
   @Test

@@ -116,7 +116,7 @@ public class SettingsManager {
     SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settings.getSettingsKey());
 
     if (settings.isNewIn(this)) {
-      int settingsId = adapter.getCount(); // Starting with 0, the second would be 1.
+      int settingsId = adapter.size(); // Starting with 0, the second would be 1.
       settings.setSettingsId(settingsId);
     }
 
@@ -128,10 +128,10 @@ public class SettingsManager {
         manifest.add(settingsKey);
       }
     } else {
-      adapter.update(settingsJson, settings.getSettingsId());
+      adapter.set(settings.getSettingsId(), settingsJson);
     }
 
-    return adapter.getCount();
+    return adapter.size();
   }
 
   /**
@@ -147,13 +147,13 @@ public class SettingsManager {
       throw new IllegalArgumentException("Cannot remove settings that does not exist yet.");
     } else {
       String settingsJson = gson.toJson(settings);
-      adapter.remove(settingsJson);
-      if (adapter.getCount() == 0) {
+      adapter.remove(settings.getSettingsId());
+      if (adapter.size() == 0) {
         manifest.remove(settings.getSettingsKey());
       }
     }
 
-    return adapter.getCount();
+    return adapter.size();
   }
 
   /**
@@ -191,7 +191,7 @@ public class SettingsManager {
    */
   @Nullable
   public <T> T getSettings(String settingsKey, Class<T> classOfT, int index) {
-    String settingsJson = getSequencedSettingsAdapter(settingsKey).getSettings(index);
+    String settingsJson = getSequencedSettingsAdapter(settingsKey).get(index);
     return gson.fromJson(settingsJson, classOfT);
   }
 
@@ -204,23 +204,47 @@ public class SettingsManager {
    * @return the settings object list
    */
   public <T> List<T> getAllSettings(String settingsKey, Class<T> classOfT) {
-    return getSequencedSettingsAdapter(settingsKey).getOrCreate().stream()
-        .map(settingsJson -> gson.fromJson(settingsJson, classOfT))
-        .collect(Collectors.toList());
+    SequencedSettingsAdapter adapter = getSequencedSettingsAdapter(settingsKey);
+    if (adapter.isExist()) {
+      return adapter.toList().stream()
+          .map(settingsJson -> gson.fromJson(settingsJson, classOfT))
+          .collect(Collectors.toList());
+    } else {
+      return ImmutableList.of();
+    }
   }
 
-  /**
-   * Provide operations for the settings list of given key.
-   */
-  private class SequencedSettingsAdapter {
+  protected abstract class SettingsAdapter {
 
-    private final String settingsKey;
+    protected final String settingsKey;
 
-    private SequencedSettingsAdapter(String settingsKey) {
+    protected SettingsAdapter(String settingsKey) {
       this.settingsKey = getSettingsStorageKey(settingsKey);
     }
 
-    private List<String> getOrCreate() {
+    public boolean isExist() {
+      return pluginSettings.get(settingsKey) != null;
+    }
+
+    public void removeAll() {
+      pluginSettings.remove(settingsKey);
+    }
+
+  }
+
+  /**
+   * Adapts the plugin settings of a given settings key to java.util.List. The toList() methods
+   * returns an immutable list for querying methods such as size(), isEmpty(), contains(o), and
+   * get(i). The change making methods such as add(o), set(i, o), remove(i), and remove(o) operates
+   * on a modifiable list and save the list back to plugin settings.
+   */
+  private class SequencedSettingsAdapter extends SettingsAdapter {
+
+    private SequencedSettingsAdapter(String settingsKey) {
+      super(settingsKey);
+    }
+
+    private List<String> toListInternal() {
       List<String> settings = (List<String>) pluginSettings.get(settingsKey);
       if (settings == null) {
         settings = Lists.newArrayList();
@@ -229,52 +253,48 @@ public class SettingsManager {
       return settings;
     }
 
-    public boolean isExist() {
-      return pluginSettings.get(settingsKey) != null;
+    private List<String> toList() {
+      return ImmutableList.copyOf(toListInternal());
     }
 
-    /**
-     * The method assumes the settings is exist.
-     */
+    public int size() {
+      return toList().size();
+    }
+
     public boolean isEmpty() {
-      if (!isExist()) {
-        return true;
-      }
-      return getOrCreate().isEmpty();
-    }
-
-    public int getCount() {
-      return getOrCreate().size();
+      return toList().isEmpty();
     }
 
     public boolean contains(String settingsJson) {
-      return getOrCreate().contains(settingsJson);
+      return toList().contains(settingsJson);
     }
 
     public void add(String settingsJson) {
-      List<String> settingsList = getOrCreate();
+      List<String> settingsList = toListInternal();
       settingsList.add(settingsJson);
       pluginSettings.put(settingsKey, settingsList);
     }
 
-    public void update(String settingsJson, int index) {
-      List<String> settingsList = getOrCreate();
+    public String get(int index) {
+      return toList().get(index);
+    }
+
+    public void set(int index, String settingsJson) {
+      List<String> settingsList = toListInternal();
       settingsList.set(index, settingsJson);
       pluginSettings.put(settingsKey, settingsList);
     }
 
-    public void remove(String settingsJson) {
-      List<String> settingsList = getOrCreate();
-      settingsList.remove(settingsJson);
+    public void remove(int index) {
+      List<String> settingsList = toListInternal();
+      settingsList.remove(index);
       pluginSettings.put(settingsKey, settingsList);
     }
 
-    public void removeAll() {
-      pluginSettings.remove(settingsKey);
-    }
-
-    public String getSettings(int index) {
-      return getOrCreate().get(index);
+    public void remove(String settingsJson) {
+      List<String> settingsList = toListInternal();
+      settingsList.remove(settingsJson);
+      pluginSettings.put(settingsKey, settingsList);
     }
 
   }
@@ -304,7 +324,7 @@ public class SettingsManager {
     }
 
     public List<String> getList() {
-      return ImmutableList.copyOf(adapter.getOrCreate());
+      return adapter.toList();
     }
 
   }
