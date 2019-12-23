@@ -24,7 +24,7 @@
 
 package ut.org.echeveria.snippets.jira.settings;
 
-import org.echeveria.snippets.jira.settings.SettingsViewerAction;
+import org.echeveria.snippets.jira.settings.SettingsViewer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class SettingsViewerActionTest {
   @Test(expected = Exception.class)
   public void testSomething() throws Exception {
 
-    SettingsViewerAction testClass = new SettingsViewerAction();
+    SettingsViewer testClass = new SettingsViewer();
 
     throw new Exception("SettingsViewerAction has no tests!");
 

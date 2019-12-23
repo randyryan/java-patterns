@@ -28,15 +28,30 @@ import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 
-public class SettingsViewerAction extends JiraWebActionSupport {
+public class SettingsViewer extends JiraWebActionSupport {
 
   public static final String VIEW = "view";
 
-  private static final Logger log = LoggerFactory.getLogger(SettingsViewerAction.class);
+  private static final Logger log = LoggerFactory.getLogger(SettingsViewer.class);
 
   @Override
-  public String execute() throws Exception {
-    return SettingsViewerAction.VIEW;
+  public void doValidation() {
+    super.doValidation();
+  }
+
+  @Override
+  public String doExecute() {
+    return doDefault();
+  }
+
+  @Override
+  public String execute() {
+    return doDefault();
+  }
+
+  @Override
+  public String doDefault() {
+    return SettingsViewer.VIEW;
   }
 
 }

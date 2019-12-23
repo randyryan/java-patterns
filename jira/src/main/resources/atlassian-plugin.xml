@@ -9,15 +9,29 @@
     <param name="plugin-logo">images/pluginLogo.png</param> 
   </plugin-info>  
   <resource type="i18n" name="i18n" location="jira-snippets"/>  
-  <webwork1 name="Settings Viewer" i18n-name-key="settings-viewer.name" key="settings-viewer">
-    <description key="settings-viewer.description">View and manipulate PluginSettings.</description>
+  <!-- Settings Viewer -->
+  <webwork1 name="Settings Viewer" i18n-name-key="settings-viewer.name" key="settings-viewer"> 
+    <description key="settings-viewer.description">View and manipulate PluginSettings.</description>  
     <actions> 
-      <action name="org.echeveria.snippets.jira.settings.SettingsViewerAction" alias="SettingsViewer">
-        <view name="view">/settings-viewer/view.vm</view>
+      <action name="org.echeveria.snippets.jira.settings.SettingsViewer" alias="SettingsViewer"> 
+        <view name="view">/settings-viewer/view.vm</view> 
       </action> 
     </actions> 
   </webwork1>  
-  <rest name="Settings Resource" i18n-name-key="settings-resource.name" key="settings-resource" path="/jira-snippets" version="1.0">
-    <description key="settings-resource.description">Settings REST Resources</description>
+  <!-- Settings Viewer: Webresource -->
+  <web-resource name="Settings Viewer Webresource" i18n-name-key="settings-viewer-webresource.name" key="settings-viewer-webresource"> 
+    <description key="settings-viewer-webresource.description">Scripts and styles needed to run the Settings Viewer</description>  
+    <dependency>com.atlassian.auiplugin:dialog2</dependency>  
+    <transformation extension="js"> 
+      <transformer key="jsI18n"/> 
+    </transformation> 
+    <resource name="echeveria-dialog.js" type="download" location="/echeveria/echeveria-dialog.js"/>  
+    <resource name="settings-viewer.js" type="download" location="/settings-viewer/settings-viewer.js"/>  
+    <resource name="settings-viewer-init.js" type="download" location="/settings-viewer/settings-viewer-init.js"/>  
+    <context>atl.general</context>  
+    <context>atl.admin</context>  
+  </web-resource>  
+  <rest name="Settings Resource" i18n-name-key="settings-resource.name" key="settings-resource" path="/jira-snippets" version="1.0"> 
+    <description key="settings-resource.description">Settings REST Resources</description> 
   </rest>
 </atlassian-plugin>
