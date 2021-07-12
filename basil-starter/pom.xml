@@ -10,7 +10,7 @@
   <packaging>pom</packaging>
 
   <name>Basil Starter</name>
-  <description>An opinionated, Scaffolding/bootstrapping POM for the Basil Project</description>
+  <description>An opinionated, Scaffolding/bootstrapping POM for the Basil Projects</description>
   <inceptionYear>2018</inceptionYear>
 
   <licenses>

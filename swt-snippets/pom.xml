@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.echeveria.snippets</groupId>
+  <groupId>org.basil.patterns</groupId>
   <artifactId>swt-snippets</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
